@@ -85,8 +85,9 @@ QRReader.scan = function (callback) {
 			var qrid = e.data[0][2];
 			QRReader.active = false
 			callback(qrid);
+		} else {
+			setTimeout(newDecoderFrame, 0);
 		}
-		setTimeout(newDecoderFrame, 0);
 	}
 	QRReader.decoder.onmessage = onDecoderMessage;
 
