@@ -38,16 +38,27 @@ QRReader.init = function (webcam_selector, baseurl) {
 
 	// Start capturing video only
 	function startCapture(camera) {
-		var constraints = {audio: false};
+		var constraints = { audio : false };
 		if (camera) constraints.video = camera;
 		else constraints.video = true;
 
 		// Start video capturing
-		navigator.getUserMedia(constraints, function(stream) {
-			QRReader.webcam.src = window.URL.createObjectURL(stream);
-		}, function(err) {
-			console.log("Error in navigator.getUserMedia: " + err);
-		});
+		// If available, use new navigator.mediaDevices.getUserMedia API (uses promises),
+		// otherwise fallback to old navigator.mediaDevices API
+		if (navigator.mediaDevices.getUserMedia) {
+			navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
+				QRReader.webcam.src = window.URL.createObjectURL(stream);
+			}).catch(function(err) {
+				console.log("Error in getUserMedia: " + err.name + ": " + err.message);
+				console.log("Maybe there is no camera connected?");
+			});
+		} else {
+			navigator.getUserMedia(constraints, function(stream) {
+				QRReader.webcam.src = window.URL.createObjectURL(stream);
+			}, function(err) {
+				console.log("Error in navigator.getUserMedia: " + err);
+			});
+		}
 	}
 
 	// Firefox lets users choose their camera, so no need to search for an environment
@@ -55,19 +66,24 @@ QRReader.init = function (webcam_selector, baseurl) {
 	if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1)
 		startCapture(null);
 	else {
-		MediaStreamTrack.getSources(function (sources) {
-			var found_env_cam = false;
+		// Currently (March 2016) Chrome neither supports the facingMode constraint
+		// for getUserMedia nor does it ask the user which camera to use. Therefore, scan
+		// through all cameras and look for "back" in their label description to choose
+		// the deviceId (back camera on smartphones)
+		navigator.mediaDevices.enumerateDevices().then(function (sources) {
 			for (var i = 0; i < sources.length; i++) {
-				if (sources[i].kind == "video" && sources[i].facing == "environment") {
-					var constraints = {optional: [{sourceId: sources[i].id}]};
+				// Label of back camera usually contains "facing back"
+				if (sources[i].kind == "videoinput" && sources[i].label.indexOf("back") != -1) {
+					var constraints = { deviceId : { exact : sources[i].deviceId } };
 					startCapture(constraints);
-					
-					found_env_cam = true;
+					return;
 				}
 			}
 
 			// If no specific environment camera is found (non-smartphone), user chooses
-			if (!found_env_cam) startCapture(null);
+			startCapture(null);
+		}).catch(function (err) {
+			console.log(err.name + ": " + err.message);
 		});
 	}
 }
