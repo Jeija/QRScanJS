@@ -2,7 +2,7 @@
 QR-Code scanner library for JavaScript based on [ZBar](http://zbar.sourceforge.net/) and [zbarjs](https://github.com/yurydelendik/zbarjs), compiled with emscripten. However, any types of code other than QR Codes are disabled, so QRScanJS runs faster than zbarjs and is therefore more suited for lower-end systems.
 
 ### Example
-You can try out QRScanJS [wihtout downloading](https://Jeija.github.io/QRScanJS/example.html)
+**You can try out QRScanJS [without downloading](https://Jeija.github.io/QRScanJS/example.html)**
 
 ### Usage
 Download QRScanJS and include qrscan.js in your HTML:
