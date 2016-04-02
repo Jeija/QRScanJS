@@ -33,6 +33,43 @@ QRReader.scan(function (result) {
 
 Callback() will only be called once. If you want to scan for multiple QR Codes, you have to call `QRReader.scan` again.
 
+### Usage with bower
+QRScanJS is on [Bower](http://bower.io/). You can install it using
+```bash
+bower install qrscanjs
+```
+
+This is the minimal example file adopted to work with bower. Mind that both the script `src` URL has changed as well as the second parameter to `QRReader.init`:
+```html
+<!DOCTYPE html>
+
+<html>
+<head>
+	<title>QRScanJS Bower</title>
+	<script type="text/javascript" src="bower_components/qrscanjs/qrscan.js"></script>
+</head>
+<body>
+	<h1>My Bower project using QRScanJS</h1>
+	<video autoplay="true" id="webcam" width=320></video>
+	<ul id="list"></ul>
+
+	<script type="text/javascript">
+		QRReader.init("#webcam", "bower_components/qrscanjs/");
+		function scan() {
+			QRReader.scan(function (result) {
+				var list = document.getElementById("list");
+				var li = document.createElement("li");
+				li.appendChild(document.createTextNode(result));
+				list.appendChild(li);
+				setTimeout(scan, 200);
+			});
+		}
+		scan();
+	</script>
+</body>
+</html>
+```
+
 ### Compilation
 `decoder.js` and `decoder.min.js` are compiled from the ZBar source code. You can generate these files yourself by following these steps:
 
