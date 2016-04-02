@@ -17,7 +17,7 @@
     "test",
     "tests"
   ],
-  "keywords": ["qr", "code", "scan", "decode", "barcode"],
+  "keywords": ["qr", "code", "scan", "scanner", "decoder", "decode", "barcode"],
   "moduleType": [],
   "license": "LGPLv2.1"
 }
