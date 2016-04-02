@@ -11,10 +11,11 @@ QRReader.decoder = null;
 
 
 /**
- * \brief QRReader Initialization
+ * QRReader Initialization
  * Call this as soon as the document has finished loading.
  *
- * \param webcam_selector selector for the webcam video tag
+ * webcam_selector: selector for the webcam video tag
+ * baseurl: path to QRScanJS from the working directory of your JavaScript
  */
 QRReader.init = function (webcam_selector, baseurl) {
 	baseurl = typeof baseurl !== "undefined" ? baseurl : "";
@@ -73,10 +74,10 @@ QRReader.init = function (webcam_selector, baseurl) {
 }
 
 /**
- * \brief QRReader Scan Action
+ * QRReader Scan Action
  * Call this to start scanning for QR codes.
  *
- * \param A function(scan_result)
+ * callback: A function(scan_result)
  */
 QRReader.scan = function (callback) {
 	QRReader.active = true
