@@ -37,53 +37,24 @@ QRReader.init = function (webcam_selector, baseurl) {
 	}, false);
 
 	// Start capturing video only
-	function startCapture(camera) {
-		var constraints = { audio : false };
-		if (camera) constraints.video = camera;
-		else constraints.video = true;
+	// Prefer the environment-facing camera on mobile devices
+	var constraints = { audio : false, video : { facingMode : "environment" } };
 
-		// Start video capturing
-		// If available, use new navigator.mediaDevices.getUserMedia API (uses promises),
-		// otherwise fallback to old navigator.mediaDevices API
-		if (navigator.mediaDevices.getUserMedia) {
-			navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
-				QRReader.webcam.src = window.URL.createObjectURL(stream);
-			}).catch(function(err) {
-				console.log("Error in getUserMedia: " + err.name + ": " + err.message);
-				console.log("Maybe there is no camera connected?");
-			});
-		} else {
-			navigator.getUserMedia(constraints, function(stream) {
-				QRReader.webcam.src = window.URL.createObjectURL(stream);
-			}, function(err) {
-				console.log("Error in navigator.getUserMedia: " + err);
-			});
-		}
-	}
-
-	// Firefox lets users choose their camera, so no need to search for an environment
-	// facing camera
-	if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1)
-		startCapture(null);
-	else {
-		// Currently (March 2016) Chrome neither supports the facingMode constraint
-		// for getUserMedia nor does it ask the user which camera to use. Therefore, scan
-		// through all cameras and look for "back" in their label description to choose
-		// the deviceId (back camera on smartphones)
-		navigator.mediaDevices.enumerateDevices().then(function (sources) {
-			for (var i = 0; i < sources.length; i++) {
-				// Label of back camera usually contains "facing back"
-				if (sources[i].kind == "videoinput" && sources[i].label.indexOf("back") != -1) {
-					var constraints = { deviceId : { exact : sources[i].deviceId } };
-					startCapture(constraints);
-					return;
-				}
-			}
-
-			// If no specific environment camera is found (non-smartphone), user chooses
-			startCapture(null);
-		}).catch(function (err) {
-			console.log(err.name + ": " + err.message);
+	// Start video capturing
+	// If available, use new navigator.mediaDevices.getUserMedia API (uses promises),
+	// otherwise fallback to old navigator.mediaDevices API
+	if (navigator.mediaDevices.getUserMedia) {
+		navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
+			QRReader.webcam.src = window.URL.createObjectURL(stream);
+		}).catch(function(err) {
+			console.log("Error in getUserMedia: " + err.name + ": " + err.message);
+			console.log("Maybe there is no camera connected?");
+		});
+	} else {
+		navigator.getUserMedia(constraints, function(stream) {
+			QRReader.webcam.src = window.URL.createObjectURL(stream);
+		}, function(err) {
+			console.log("Error in navigator.getUserMedia: " + err.name + ": " + err.message);
 		});
 	}
 }
