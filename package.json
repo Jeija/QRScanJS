@@ -1,0 +1,23 @@
+{
+  "name": "qrscanjs",
+  "version" : "1.0.0",
+  "homepage": "https://github.com/Jeija/qrscanjs",
+  "authors": [
+    "Jeija <norrepli@gmail.com>"
+  ],
+  "description": "Performant QR code camera scanner",
+  "main": [
+    "./decoder.min.js",
+    "./qrscan.js"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "keywords": ["qr", "code", "scan", "scanner", "decoder", "decode", "barcode"],
+  "moduleType": [],
+  "license": "LGPLv2.1"
+}
